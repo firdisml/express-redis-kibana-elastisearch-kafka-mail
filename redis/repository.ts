@@ -1,7 +1,7 @@
 import { Schema, Repository } from 'redis-om'
 import { redis } from './client'
 
-const schema = new Schema('posts', {
+export const schema = new Schema('posts', {
 
   id: { type: 'number' },
   createdAt: { type: 'date' },
