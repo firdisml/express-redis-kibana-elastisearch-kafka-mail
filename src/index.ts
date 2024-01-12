@@ -36,8 +36,36 @@ app.post(`/post`, async (req, res) => {
       content,
       author: { connect: { email: authorEmail } },
     },
+    include: { author: true },
   });
-  res.json(result);
+
+  client.indices.create({
+    index: "posts",
+    mappings: {
+      properties: {
+        id: { type: 'integer' },
+        createdAt: { type: 'date' },
+        updatedAt: { type: 'date' },
+        title: { type: 'text' },  
+        content: { type: 'text' },
+        published: { type: 'boolean' },
+        viewCount: { type: 'integer' },
+        authorId: { type: 'integer' },
+        author: { type: "object"}
+      }
+    }
+  },  { ignore: [400] })
+
+  const cached = await client.index({
+    index: 'posts',
+    body: result
+  });
+
+  console.log("Cached!")
+
+  run().catch(console.error);
+
+  res.json(cached);
 });
 
 app.put("/post/:id/views", async (req, res) => {
@@ -139,8 +167,6 @@ app.get(`/post`, async (req, res) => {
 app.get("/feed", async (req, res) => {
   const { searchString, skip, take, orderBy } = req.query;
 
-  run().catch(console.error);
-
   const cached = await repository.search().returnAll();
 
   if (cached.length !== 0) {
@@ -169,7 +195,7 @@ app.get("/feed", async (req, res) => {
     },
   });
 
-  //Elasticache should execute when new data inserted
+  //Elasticache should execute bulk when new data inserted
   /* client.indices.create({
     index: "posts",
     mappings: {

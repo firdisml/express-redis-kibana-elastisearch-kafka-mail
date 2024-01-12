@@ -5,11 +5,11 @@ const kafka = new Kafka({
     brokers: ['localhost:29092']
 })
 
-const consumer = kafka.consumer({groupId: "Email"})
+const consumer = kafka.consumer({groupId: "Post"})
 
 export const run = async () => {
     await consumer.connect()
-    await consumer.subscribe({ topic: "Email", fromBeginning: true})
+    await consumer.subscribe({ topic: "Post", fromBeginning: true})
 
     await consumer.run({
         eachMessage: async ({ partition, message }) => {
@@ -17,7 +17,7 @@ export const run = async () => {
         }
     })
 
-    console.log("Recevied")
+    console.log("Message Ready To Be Recevied!")
 }
 
 run();

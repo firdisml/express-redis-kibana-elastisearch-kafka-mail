@@ -11,9 +11,9 @@ export const run = async () => {
     await producer.connect()
 
     await producer.send({
-        topic: 'Email',
-        messages: [{ value: "This is email" }]
+        topic: 'Post',
+        messages: [{ value: "Post is successfully created!" }]
     })
 
-    console.log("Successfully sent")
+    console.log("Message Successfully sent")
 }
